@@ -2,7 +2,7 @@ pipeline {
     environment {
         registry = "gm367/comp367lab3q1"
         registryCredential = 'dockerhub_id'
-        dockerImage = 'comp367-lab3-q1'
+        dockerImage = ''
         }
     agent any
     
