@@ -1,9 +1,4 @@
 pipeline {
-    environment {
-        registry = "gm367/comp367lab3q1"
-        registryCredential = 'dockerhub_id'
-        dockerImage = ''
-        }
     agent any
     
     tools {
@@ -42,25 +37,29 @@ pipeline {
             }
         }
         
-        stage('Build Docker Image') {
-            steps{
+        stage("Login to Docker Hub") {
+            steps {
                 script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                }
-            }
-        }
-        stage('Push Image to Docker Hub') {
-            steps{
-                script {
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push()
+                    withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
+                        sh 'docker login -u gm367 -p "Yau6hLddPR2FGj"'
                     }
                 }
             }
         }
-        stage('Cleaning up') {
-            steps{
-                sh "docker rmi $registry:$BUILD_NUMBER"
+
+        stage("Build Docker Image") {
+            steps {
+                script {
+                    sh "docker build -t gm367/comp367-lab3-q1 ."
+                }
+            }
+        }
+
+        stage("Push Image to Docker Hub") {
+            steps {
+                script {
+                    sh 'docker push gm367/comp367-lab3-q1 '
+                }
             }
         }
     }
